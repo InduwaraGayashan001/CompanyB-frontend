@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Grid, TextField, Box, makeStyles, Button, Checkbox } from "@material-ui/core";
+import { Typography, Grid, TextField, Box, makeStyles, Button, Checkbox, Paper } from "@material-ui/core";
 import { useNavigate, useParams } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -81,9 +81,10 @@ export function DeliveryDetailsPage({ setPage }) {
     };
 
     return (
-        <>
+        <div style={{marginLeft:'20%'}}>
             <br></br>
             <br></br>
+            <Paper style={{padding: 50, width: 900 }} elevation={5} >
             <Typography variant="h5" alignItems="center">Delivery Details</Typography>
             <br></br>
             <br></br>
@@ -148,7 +149,8 @@ export function DeliveryDetailsPage({ setPage }) {
                     Pay now
                 </Button>
             </form>
-        </>
+            </Paper>
+        </div>
     )
 }
 

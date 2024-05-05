@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    Paper
 } from "@material-ui/core";
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -115,9 +116,10 @@ export function CheckoutDetailsPage() {
     // const deliveryChecked = data.deliveryStatus != null ? true : false
     // const manufactureChecked = data.manufactureDone != null ? true : false
     return (
-        <>
+        <div style={{marginLeft:'20%'}}>
             <br></br>
             <br></br>
+            <Paper style={{padding: 50, width: 900 }} elevation={5} >
             <Typography variant="h5" alignItems="center">Checkout Details</Typography>
             <br></br>
             <br></br>
@@ -153,6 +155,7 @@ export function CheckoutDetailsPage() {
                     <TextField type="number" value={data.payment} variant="outlined" />
                 </Grid>
             </Grid>
+            </Paper>
             <Button variant="contained" color="primary" onClick={handleOpenFeedback} className={classes.submitButton}>
                 feedback
             </Button>
@@ -181,6 +184,6 @@ export function CheckoutDetailsPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </div>
     )
 }
