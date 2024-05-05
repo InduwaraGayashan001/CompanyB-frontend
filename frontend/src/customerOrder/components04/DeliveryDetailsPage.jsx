@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Grid, TextField, Box, makeStyles, Button, Checkbox } from "@material-ui/core";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     smallBox: {
@@ -15,18 +15,34 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export function DeliveryDetailsPage({setPage}) {
+
+export function DeliveryDetailsPage({ setPage }) {
     const classes = useStyles();
     const [designChecked1, setDesignChecked1] = useState(false);
     const [designChecked2, setDesignChecked2] = useState(false);
     const navigate = useNavigate();
 
-    const onSubmitForm = ()=>{
+    const { id } = useParams()
+
+    const onSubmitForm = () => {
         var isValid = true;
-        if(isValid){
+        if (isValid) {
             setPage(2);
         }
     }
+
+    const [formData, setFormData] = useState({
+        address: "",
+        cNumber: 0,
+    });
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
 
     const handleDesignCheck1 = (event) => {
         setDesignChecked1(event.target.checked);
@@ -35,23 +51,53 @@ export function DeliveryDetailsPage({setPage}) {
         setDesignChecked2(event.target.checked);
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        console.log(id)
+        const apiAddresUrl = `http://localhost:8090/customer/order/${id}/setAddress`;
+        console.log(formData)
+        try {
+            const response = await fetch(apiAddresUrl, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: formData.address
+            })
+
+            if (response.ok) {
+                const resData = await response.json()
+                console.log(resData)
+                alert('Form submitted successfully!');
+
+                // navigate("/customer-order/delivery-details/"+ resData.orderID)
+
+            }
+        } catch (error) {
+            console.error('Failed to submit form:', error);
+            alert('Failed to submit form.');
+        }
+    };
+
     return (
         <>
-         <br></br>
-         <br></br>
+            <br></br>
+            <br></br>
             <Typography variant="h5" alignItems="center">Delivery Details</Typography>
             <br></br>
             <br></br>
             <br></br>
             <br></br>
-            <Typography variant="h6">Delivery Address:</Typography>
-            <Grid container spacing={2}  alignItems="center">
-                <Grid item>
-                    <TextField type="textBox" multiline rows={4}  variant="outlined" />
+            <form className={classes.form} onSubmit={handleSubmit}>
+                <Typography variant="h6">Delivery Address:</Typography>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item>
+                        <TextField type="textBox" name="address" value={formData.address} onChange={handleChange} multiline rows={4} variant="outlined" />
+                    </Grid>
                 </Grid>
-            </Grid>
-            <br></br>
-            <div style={{display:'flex'}} >
+                <br></br>
+                {/* <div style={{display:'flex'}} >
            
             <Grid container spacing={2} alignItems="center">
             <Typography variant="h6">City</Typography>
@@ -67,40 +113,41 @@ export function DeliveryDetailsPage({setPage}) {
                     <TextField type="textBox" variant="outlined" />
                 </Grid>
             </Grid>
-            </div>
-            <br></br>
-            <div style={{display:'flex'}} >
-            
-            <Grid container spacing={2} alignItems="center">
-            <Typography variant="h6">Contact number</Typography>
-                <Grid item>
-                    <TextField type="number" variant="outlined" />
-                </Grid>
-            </Grid>
-            <br></br>
-            
-            <Grid container spacing={2} alignItems="center">
+            </div> */}
+                <br></br>
+                <div style={{ display: 'flex' }} >
+
+                    <Grid container spacing={2} alignItems="center">
+                        <Typography variant="h6">Contact number</Typography>
+                        <Grid item>
+                            <TextField type="number" name="cNumber" value={formData.cNumber} onChange={handleChange} variant="outlined" />
+                        </Grid>
+                    </Grid>
+                    <br></br>
+
+                    {/* <Grid container spacing={2} alignItems="center">
             <Typography variant="h6">contact person number</Typography>
                 <Grid item>
                     <TextField type="number" variant="outlined" />
                 </Grid>
-            </Grid>
-            </div>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <Typography variant="h6">Your order</Typography>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <Typography variant="h6">Total ($) = </Typography>
-            <Button variant="contained" color="primary" onClick={onSubmitForm} className={classes.submitButton}>
-                Pay now
-            </Button>
+            </Grid> */}
+                </div>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <Typography variant="h6">Your order</Typography>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <Typography variant="h6">Total ($) = </Typography>
+                <Button variant="contained" color="primary" type='submit' className={classes.submitButton}>
+                    Pay now
+                </Button>
+            </form>
         </>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Typography,
     Grid,
@@ -12,7 +12,10 @@ import {
     DialogContent,
     DialogActions,
 } from "@material-ui/core";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
+
+
 
 const useStyles = makeStyles((theme) => ({
     smallBox: {
@@ -51,6 +54,9 @@ export function CheckoutDetailsPage() {
         }
     }
 
+    const { id } = useParams()
+    console.log(id)
+
     const handleDesignCheck1 = (event) => {
         setDesignChecked1(event.target.checked);
     };
@@ -76,6 +82,38 @@ export function CheckoutDetailsPage() {
         setSubmitted(true);
     };
 
+    const [isLoading, setIsLoading] = useState(false)
+    const [data, setData] = useState(null)
+    useEffect(() => {
+        console.log("sddklmlsmd")
+        const fetchData = async () => {
+            try {
+                setIsLoading(true)
+                console.log(id)
+                const response = await fetch(`http://localhost:8090/customer/order/${id}`)
+                if (!response.ok) {
+                    throw new Error("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaah")
+                }
+                const jsonData = await response.json()
+                setData(jsonData)
+                setIsLoading(false)
+            } catch (error) {
+                console.log(error)
+                alert(error)
+            }
+        }
+        fetchData()
+    }, [id])
+    if (isLoading) {
+        return (
+
+            <div>Loading</div>
+
+        )
+    }
+    console.log(data)
+    // const deliveryChecked = data.deliveryStatus != null ? true : false
+    // const manufactureChecked = data.manufactureDone != null ? true : false
     return (
         <>
             <br></br>
@@ -87,32 +125,32 @@ export function CheckoutDetailsPage() {
             <br></br>
             <div style={{ display: 'flex' }}>
                 <Typography variant="h6">Manufucturing status</Typography>
-                <Checkbox checked={designChecked1} onChange={handleDesignCheck1} />
+                <Checkbox checked={true} />
             </div>
             <br></br>
             <div style={{ display: 'flex' }}>
                 <Typography variant="h6">Delivery Status</Typography>
-                <Checkbox checked={designChecked2} onChange={handleDesignCheck2} />
+                <Checkbox checked={false} />
             </div>
             <br></br>
             <Grid container spacing={2} alignItems="center">
-                <Typography sx={{ml:2}} variant="h6">Order ID</Typography>
+                <Typography sx={{ ml: 2 }} variant="h6">Order ID</Typography>
                 <Grid item>
-                    <TextField type="number" variant="outlined" />
+                    <TextField type="number" value={data.orderID} disabled variant="outlined" />
                 </Grid>
             </Grid>
             <br></br>
             <Grid container spacing={2} alignItems="center">
                 <Typography variant="h6">Address</Typography>
                 <Grid item>
-                    <TextField type="Address" multiline rows={4} variant="outlined" />
+                    <TextField type="text" value={data.deliveryAddress} multiline rows={4} variant="outlined" />
                 </Grid>
             </Grid>
             <br></br>
             <Grid container spacing={2} alignItems="center">
                 <Typography variant="h6">payment</Typography>
                 <Grid item>
-                    <TextField type="Address" variant="outlined" />
+                    <TextField type="number" value={data.payment} variant="outlined" />
                 </Grid>
             </Grid>
             <Button variant="contained" color="primary" onClick={handleOpenFeedback} className={classes.submitButton}>
