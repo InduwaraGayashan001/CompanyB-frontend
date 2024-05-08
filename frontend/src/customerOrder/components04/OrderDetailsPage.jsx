@@ -92,6 +92,7 @@ export function DashboardPage() {
                 navigate("/customer-order/delivery-details/"+ resData.orderID)
 
             }
+            onSubmitForm()
         } catch (error) {
             console.error('Failed to submit form:', error);
             alert('Failed to submit form.');
